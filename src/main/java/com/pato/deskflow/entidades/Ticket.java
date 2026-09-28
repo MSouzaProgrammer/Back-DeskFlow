@@ -51,16 +51,20 @@ public class Ticket {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "requester_id", nullable = false)
-    private User requester;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Sector sector;
+    private User userRequester;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assignee_id")
     private User assignee;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Sector sectorApplicant;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Sector sectorDestiny;
+    
     @Column(name = "opened_at", nullable = false)
     private LocalDateTime openedAt;
 
@@ -77,29 +81,22 @@ public class Ticket {
     public Ticket() {
     }
 
-    public Ticket(
-            Long id,
-            String title,
-            String description,
-            TicketStatus ticketStatus,
-            Priority priority,
-            User requester,
-            Sector sector,
-            User assignee,
-            LocalDateTime openedAt,
-            LocalDateTime closedAt,
-            List<Message> messages
-    ) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.ticketStatus = ticketStatus;
-        this.priority = priority;
-        this.requester = requester;
-        this.sector = sector;
-        this.assignee = assignee;
-        this.openedAt = openedAt;
-        this.closedAt = closedAt;
-        this.messages = messages;
+    public Ticket(Long id, String title, String description, TicketStatus ticketStatus, Priority priority,
+        User userRequester, User assignee, Sector sectorApplicant, Sector sectorDestiny, LocalDateTime openedAt,
+        LocalDateTime closedAt, List<Message> messages) {
+      this.id = id;
+      this.title = title;
+      this.description = description;
+      this.ticketStatus = ticketStatus;
+      this.priority = priority;
+      this.userRequester = userRequester;
+      this.assignee = assignee;
+      this.sectorApplicant = sectorApplicant;
+      this.sectorDestiny = sectorDestiny;
+      this.openedAt = openedAt;
+      this.closedAt = closedAt;
+      this.messages = messages;
     }
+
+    
 }

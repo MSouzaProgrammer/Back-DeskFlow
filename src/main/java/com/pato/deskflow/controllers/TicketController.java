@@ -1,10 +1,11 @@
 package com.pato.deskflow.controllers;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.pato.deskflow.dto.request.TicketRequest;
 import com.pato.deskflow.dto.response.TicketResponse;
@@ -12,56 +13,31 @@ import com.pato.deskflow.services.TicketService;
 
 import jakarta.validation.Valid;
 
-@RestController
-@RequestMapping("/tickets")
+@Controller 
+@RequestMapping("/ticket")
 public class TicketController {
 
-    private final TicketService ticketService;
+  private final TicketService ticketService;
 
-    public TicketController(TicketService ticketService) {
-        this.ticketService = ticketService;
+  public TicketController(TicketService ticketService) {
+    this.ticketService = ticketService;
+  }
+
+  @PostMapping("/create")
+  public ResponseEntity<?> save(@Valid @RequestBody TicketRequest ticketRequest){
+    try{
+      TicketResponse ticket = ticketService.save(ticketRequest);
+
+      return ResponseEntity.status(HttpStatus.CREATED).body(ticket);
     }
-
-    @PostMapping
-    public ResponseEntity<TicketResponse> create(
-            @Valid @RequestBody TicketRequest request) {
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(ticketService.create(request));
+    catch(RuntimeException e){
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
+  }
 
-    @GetMapping
-    public ResponseEntity<List<TicketResponse>> getAll() {
 
-        return ResponseEntity.ok(
-                ticketService.getAll()
-        );
-    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TicketResponse> getById(
-            @PathVariable Long id) {
 
-        return ResponseEntity.ok(
-                ticketService.getById(id)
-        );
-    }
 
-    @GetMapping("/me")
-    public ResponseEntity<List<TicketResponse>> getMyTickets() {
 
-        return ResponseEntity.ok(
-                ticketService.getMyTickets()
-        );
-    }
-
-    @PostMapping("/{id}/assume")
-    public ResponseEntity<TicketResponse> assume(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                ticketService.assume(id)
-        );
-    }
 }
