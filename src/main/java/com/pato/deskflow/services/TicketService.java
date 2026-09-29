@@ -9,6 +9,7 @@ import com.pato.deskflow.dto.request.TicketRequest;
 import com.pato.deskflow.dto.response.TicketResponse;
 import com.pato.deskflow.entidades.Ticket;
 import com.pato.deskflow.entidades.User;
+import com.pato.deskflow.enuns.TicketStatus;
 import com.pato.deskflow.repository.TicketRepository;
 import com.pato.deskflow.repository.UserRepository;
 
@@ -33,7 +34,7 @@ public class TicketService {
     Ticket ticket = new Ticket();
     ticket.setTitle(ticketRequest.title());
     ticket.setDescription(ticketRequest.description());
-    ticket.setTicketStatus(ticketRequest.ticketStatus());
+    ticket.setTicketStatus(TicketStatus.ABERTO);
     ticket.setPriority(ticketRequest.priority());
     ticket.setSectorApplicant(ticketRequest.sectorApplicant());
     ticket.setSectorDestiny(ticketRequest.sectorDestiny());
@@ -56,11 +57,28 @@ public class TicketService {
     );
   }
 
-  public Optional<Ticket> assumeTicket(Long idTicket, Long idUAssume){
-      User assumer = userRepository.findById(idUAssume).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-      Ticket ticket = ticketRepository.findById(idTicket).orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
-      ticket.setAssignee(assumer);
-      Ticket saved = ticketRepository.save(ticket);
-      return Optional.of(saved);
-  }
+  public TicketResponse assumeTicket(Long idTicket, Long idUAssume) {
+
+    User assumer = userRepository.findById(idUAssume)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+
+    Ticket ticket = ticketRepository.findById(idTicket)
+            .orElseThrow(() -> new RuntimeException("Ticket não encontrado"));
+
+    ticket.setAssignee(assumer);
+
+    Ticket save = ticketRepository.save(ticket);
+
+    return new TicketResponse(
+            save.getId(),
+            save.getTitle(),
+            save.getDescription(),
+            save.getTicketStatus(),
+            save.getPriority(),
+            save.getUserRequester().getName(),
+            save.getSectorApplicant(),
+            save.getSectorDestiny(),
+            save.getAssignee().getName()
+    );
+}
 }
