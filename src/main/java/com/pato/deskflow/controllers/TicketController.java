@@ -5,12 +5,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.pato.deskflow.dto.request.TicketRequest;
 import com.pato.deskflow.dto.response.TicketResponse;
+import com.pato.deskflow.enuns.Sector;
 import com.pato.deskflow.services.TicketService;
 
 import jakarta.validation.Valid;
@@ -38,12 +38,14 @@ public class TicketController {
   }
 
   @PostMapping("/assume/{idTicket}/{idAssume}")
-  public ResponseEntity<?> assumeTicket(@PathVariable Long idTicket, @PathVariable Long idAssume){
+  public ResponseEntity<TicketResponse> assumeTicket(@PathVariable Long idTicket, @PathVariable Long idAssume){
     
     return ResponseEntity.ok(ticketService.assumeTicket(idTicket, idAssume));
   }
 
-
-
-
+  @PostMapping("/transfer/{idTicket}/{idOldUser}/{newSector}")
+  public ResponseEntity<TicketResponse> transfer(@PathVariable Long idTicket, @PathVariable Long idOldUser, @PathVariable Integer newSector){
+    Sector sector = Sector.values()[newSector];
+    return ResponseEntity.ok(ticketService.transfer(idTicket, idOldUser, sector));
+  }
 }
